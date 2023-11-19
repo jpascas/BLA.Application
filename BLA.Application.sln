@@ -31,8 +31,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		app.env = app.env
-		.github\workflows\build.yml = .github\workflows\build.yml
+		build-and-test.yml = build-and-test.yml
 		db.env = db.env
+		.github\workflows\Build-and-analyze.yml = .github\workflows\Build-and-analyze.yml
 		docker-compose.yml = docker-compose.yml
 		LICENSE = LICENSE
 	EndProjectSection
