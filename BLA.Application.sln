@@ -31,9 +31,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		app.env = app.env
-		build-and-test.yml = build-and-test.yml
-		db.env = db.env
 		.github\workflows\Build-and-analyze.yml = .github\workflows\Build-and-analyze.yml
+		.github\workflows\build-and-test.yml = .github\workflows\build-and-test.yml
+		db.env = db.env
 		docker-compose.yml = docker-compose.yml
 		LICENSE = LICENSE
 	EndProjectSection
@@ -46,17 +46,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dbinit", "dbinit", "{C6C547
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application.UnitTests", "test\Application.UnitTests\Application.UnitTests.csproj", "{068BD25B-DEAF-4121-9E1B-419899828BFA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAPI.IntegrationTests", "test\WebAPI.IntegrationTests\WebAPI.IntegrationTests.csproj", "{1CFEF768-B6BD-4E8F-BD91-FFE3EC63D1B0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAPI.IntegrationTests", "test\WebAPI.IntegrationTests\WebAPI.IntegrationTests.csproj", "{1CFEF768-B6BD-4E8F-BD91-FFE3EC63D1B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Presentation.UnitTests", "src\Presentation.UnitTests\Presentation.UnitTests.csproj", "{66FFE7C9-2E73-4D62-830A-B99BB94B10EC}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Common", "src\Tests.Common\Tests.Common.csproj", "{4D282DF7-5529-4BC9-885D-61AE6BB5530F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Presentation.UnitTests", "src\Presentation.UnitTests\Presentation.UnitTests.csproj", "{66FFE7C9-2E73-4D62-830A-B99BB94B10EC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Unit", "Unit", "{DFA79CB0-8D17-40B7-B4FF-418555FB54B2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Architecture", "Architecture", "{4C0F841E-4594-413C-8896-6047D62E3435}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Integration", "Integration", "{4864184D-D12F-4E53-B8D6-22E068CCA1E4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Common", "test\Tests.Common\Tests.Common.csproj", "{B5369C11-C54C-425D-B97E-F0DF3772DA4E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -100,10 +100,10 @@ Global
 		{66FFE7C9-2E73-4D62-830A-B99BB94B10EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{66FFE7C9-2E73-4D62-830A-B99BB94B10EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{66FFE7C9-2E73-4D62-830A-B99BB94B10EC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4D282DF7-5529-4BC9-885D-61AE6BB5530F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4D282DF7-5529-4BC9-885D-61AE6BB5530F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4D282DF7-5529-4BC9-885D-61AE6BB5530F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4D282DF7-5529-4BC9-885D-61AE6BB5530F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5369C11-C54C-425D-B97E-F0DF3772DA4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5369C11-C54C-425D-B97E-F0DF3772DA4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5369C11-C54C-425D-B97E-F0DF3772DA4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5369C11-C54C-425D-B97E-F0DF3772DA4E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -123,10 +123,10 @@ Global
 		{068BD25B-DEAF-4121-9E1B-419899828BFA} = {DFA79CB0-8D17-40B7-B4FF-418555FB54B2}
 		{1CFEF768-B6BD-4E8F-BD91-FFE3EC63D1B0} = {4864184D-D12F-4E53-B8D6-22E068CCA1E4}
 		{66FFE7C9-2E73-4D62-830A-B99BB94B10EC} = {DFA79CB0-8D17-40B7-B4FF-418555FB54B2}
-		{4D282DF7-5529-4BC9-885D-61AE6BB5530F} = {6A08E457-22BD-4507-AE90-0750350C4C28}
 		{DFA79CB0-8D17-40B7-B4FF-418555FB54B2} = {6A08E457-22BD-4507-AE90-0750350C4C28}
 		{4C0F841E-4594-413C-8896-6047D62E3435} = {6A08E457-22BD-4507-AE90-0750350C4C28}
 		{4864184D-D12F-4E53-B8D6-22E068CCA1E4} = {6A08E457-22BD-4507-AE90-0750350C4C28}
+		{B5369C11-C54C-425D-B97E-F0DF3772DA4E} = {6A08E457-22BD-4507-AE90-0750350C4C28}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7327AA8A-8400-46D0-BD0C-C1DA6AE27F34}
