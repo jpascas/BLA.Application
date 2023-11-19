@@ -33,4 +33,6 @@ jobs:
       run: dotnet build --configuration Release --no-restore
     
     - name: Test
+      env:        
+        ConnectionStrings__BLA: ${{ secrets.CONN_STRING }}
       run: dotnet test --no-restore --verbosity normal

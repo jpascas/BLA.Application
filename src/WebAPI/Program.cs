@@ -9,7 +9,16 @@ namespace BLA.Application
     {
         public static void Main(string[] args)
         {
+            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
             var builder = WebApplication.CreateBuilder(args);
+
+            var configuration = builder.Configuration
+                .SetBasePath(System.IO.Directory.GetCurrentDirectory())
+                .AddJsonFile($"appsettings.json", optional: false)
+                .AddJsonFile($"appsettings.{env}.json", optional: true)
+                .AddEnvironmentVariables() // this is important
+                .Build();
 
             builder.Services
                 .AddApplication()
