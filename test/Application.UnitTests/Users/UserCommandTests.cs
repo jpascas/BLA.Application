@@ -16,6 +16,7 @@ namespace Application.UnitTests
             var sut = new CreateUserCommand(Constants.UserConstants.INVALID_EMAIL, Constants.UserConstants.INVALID_PASSWORD);
 
             sut.Email.Should().Be(Constants.UserConstants.INVALID_EMAIL);
+
             sut.Password.Should().Be(Constants.UserConstants.INVALID_PASSWORD);
         }
 
