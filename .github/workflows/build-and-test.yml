@@ -35,4 +35,4 @@ jobs:
     - name: Test
       env:        
         ConnectionStrings__BLA: ${{ secrets.CONN_STRING }}
-      run: dotnet test --no-restore --verbosity normal
+      run: dotnet test --no-restore
