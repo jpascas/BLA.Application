@@ -6,6 +6,7 @@ using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 using Presentation.Mapping;
 using Presentation.Middlewares;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Enums;
+using Application.Abstractions;
 
 namespace Presentation;
 
@@ -44,6 +45,8 @@ public static class DependencyInjection
             // Replace the default result factory with a custom implementation.
             configuration.OverrideDefaultResultFactoryWith<CustomResultFactory>();
         });
+        services.AddHttpContextAccessor();
+
         return services;
     }
 }

@@ -13,6 +13,7 @@ using Application.Commands;
 using Application.Queries;
 using System.Reflection;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Attributes;
+using Application.Abstractions;
 
 namespace Presentation.Endpoints
 {
@@ -20,41 +21,49 @@ namespace Presentation.Endpoints
     public class UsersController : ApiController
     {
         private readonly IMapper mapper;
-        private readonly ICommandBus commandBus;
-        private readonly IUserQueryService userQueryService;
+        private readonly ICommandBus commandBus;        
 
-        public UsersController(ICommandBus commandBus, IUserQueryService userQueryService, IMapper mapper)
+        public UsersController(ICommandBus commandBus, IMapper mapper)
         {
-            this.commandBus = commandBus;            
-            this.userQueryService = userQueryService;
+            this.commandBus = commandBus;                        
             this.mapper = mapper;
         }
 
         [HttpPost("")]
         [FluentValidationAutoValidationAttribute]
-        public async Task<ActionResult> Create([FromBody] ApplicationUserInsertModel userModel)
+        public async Task<ActionResult> Create([FromBody] ApplicationUserInsertRequestModel userModel)
         {            
             var command = new CreateUserCommand(userModel.Email, userModel.Password);
 
-            await this.commandBus.Send(command);
+            var userResult = await this.commandBus.Send<CreateUserCommand, User>(command);
 
-            if (command.IsCommandValid())
+            if (userResult.Success)
             {
-                User user = await this.userQueryService.FindByEmail(userModel.Email);
-                ApplicationUserIResultModel applicationUser = this.mapper.Map<User, ApplicationUserIResultModel>(user);
+                ApplicationUserResultModel applicationUser = this.mapper.Map<User, ApplicationUserResultModel>(userResult.Result);
                 return Ok(applicationUser);
             }
             else
             {                
-                return StatusCode(500, ConvertCommandResultToErrorResult(command));
+                return ToFailureResult(userResult);
             }
         }
 
-        private ErrorResult ConvertCommandResultToErrorResult(BaseCommand command)
+        [HttpPost("login")]
+        [FluentValidationAutoValidationAttribute]
+        public async Task<ActionResult> Login([FromBody] LoginRequestModel loginModel)
         {
-            ErrorResult result = new ErrorResult();
-            command.Errors.ForEach(e => result.Messages.Add(e.Message));
-            return result;
-        }
+            var command = new LoginUserCommand(loginModel.Email, loginModel.Password);
+
+            var tokenResult = await this.commandBus.Send<LoginUserCommand, string>(command);
+
+            if (tokenResult.Success)
+            {                
+                return Ok(tokenResult.Result);
+            }
+            else
+            {
+                return ToFailureResult(tokenResult);
+            }
+        }      
     }
 }

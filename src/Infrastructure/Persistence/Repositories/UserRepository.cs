@@ -22,7 +22,7 @@ namespace Infrastructure.Persistence.Repositories
             List<NpgsqlParameter> parameters = new List<NpgsqlParameter>()
             {
                         GetNamedParameter("p_email", user.Email, NpgsqlTypes.NpgsqlDbType.Text),
-                        GetNamedParameter("p_password", user.Password, NpgsqlTypes.NpgsqlDbType.Text)
+                        GetNamedParameter("p_password_hash", user.PasswordHash, NpgsqlTypes.NpgsqlDbType.Text)
             };                       
             return Task.FromResult(this.ExecuteAsSingleOrDefault<User>("sp_insert_user", parameters.ToArray(), Mapper));            
         }
@@ -55,7 +55,7 @@ namespace Infrastructure.Persistence.Repositories
             User user = new User();
             user.Id = reader.Get<long>("id");
             user.Email = reader.Get<string>("email");
-            user.Password = reader.Get<string>("password");            
+            user.PasswordHash = reader.Get<string>("password_hash");            
             return user;
         }
     }

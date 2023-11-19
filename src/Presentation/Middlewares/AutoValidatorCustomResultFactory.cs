@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Presentation.ViewModels;
 
 namespace Presentation.Middlewares
 {
@@ -14,7 +15,7 @@ namespace Presentation.Middlewares
     {
         public IActionResult CreateActionResult(ActionExecutingContext context, ValidationProblemDetails validationProblemDetails)
         {
-            return new BadRequestObjectResult(new { Title = "Validation errors", ValidationErrors = validationProblemDetails?.Errors });
+            return new BadRequestObjectResult(new ValidationErrorResult("Validation errors", validationProblemDetails?.Errors));
         }
     }
 }

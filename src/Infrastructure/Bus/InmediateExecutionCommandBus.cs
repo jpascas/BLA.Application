@@ -1,4 +1,5 @@
 ﻿using Application;
+using Application.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,18 +14,10 @@ namespace Infrastructure.Bus
             this._serviceProvider = serviceProvider;
         }
 
-        public async Task Send<T>(IEnumerable<T> messages) where T : ICommand
+        public async Task<OperationResult<TResult>> Send<T, TResult>(T message) where T : ICommand
         {
-            foreach (var item in messages)
-            {
-                await Send(item);
-            }
-        }
-
-        public async Task Send<T>(T message) where T : ICommand
-        {
-            var handler = (ICommandHandler<T>)this._serviceProvider.GetService(typeof(ICommandHandler<T>));
-            await handler.Handle(message);
-        }
+            var handler = (ICommandHandler<T, TResult>)this._serviceProvider.GetService(typeof(ICommandHandler<T, TResult>));
+            return await handler.Handle(message);
+        }        
     }
 }

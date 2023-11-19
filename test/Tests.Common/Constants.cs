@@ -9,6 +9,10 @@
 
             public const string INVALID_PASSWORD = "password";
             public const string VALID_PASSWORD = "fdsSDF32.";
+            /*
+            public const string INVALID_PASSWORDHASH = "";
+            public const string VALID_PASSWORDHASH = "fasdfasdf3245@#%ASDFASDFasdfasdf";
+            */
         }
     }
 }

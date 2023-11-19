@@ -1,4 +1,5 @@
-﻿using Application.Commands;
+﻿using Application.Abstractions;
+using Application.Commands;
 using Domain.Entities;
 using Domain.Repositories;
 using System;
@@ -8,32 +9,35 @@ using System.Threading.Tasks;
 
 namespace Application.Handlers
 {
-    public class CreateUserHandler : ICommandHandler<CreateUserCommand>
+    public class CreateUserHandler : ICommandHandler<CreateUserCommand, User>
     {
 
         private readonly IUserRepository _repository;
+        private readonly IPasswordHasher passwordHasher;
 
-        public CreateUserHandler(IUserRepository repository)
+        public CreateUserHandler(IUserRepository repository, IPasswordHasher passwordHasher)
         {
             this._repository = repository;
+            this.passwordHasher = passwordHasher;
         }
 
-        public async Task Handle(CreateUserCommand command)
+        public async Task<OperationResult<User>> Handle(CreateUserCommand command)
         {
             if (!command.IsValid())
-                return;
+                return OperationResult<User>.FailureResult("Input is Invalid");
 
             // check if user already exists
             var existentUser = await this._repository.GetByEmail(command.Email);
 
             if (existentUser != null)
-            {
-                command.AddError("User Already Exists");
-                return;
+            {                
+                return OperationResult<User>.FailureResult("User Already Exists");
             }
 
-            var newUser = new User() { Email = command.Email , Password = command.Password};
-            await this._repository.Create(newUser);
+            var hash = this.passwordHasher.Hash(command.Password);
+            var newUser = new User() { Email = command.Email , PasswordHash = hash };
+            var createdUser = await this._repository.Create(newUser);
+            return OperationResult<User>.SuccessResult(createdUser);
         }
     }
 }

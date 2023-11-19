@@ -1,6 +1,7 @@
 ﻿using Application.Commands;
 using Application.Handlers;
 using Application.Queries;
+using Domain.Entities;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,8 +14,9 @@ public static class DependencyInjection
         var assembly = typeof(DependencyInjection).Assembly;        
 
         services.AddValidatorsFromAssembly(assembly);
-        services.AddTransient<ICommandHandler<CreateUserCommand>, CreateUserHandler>();
+        services.AddTransient<ICommandHandler<CreateUserCommand, User>, CreateUserHandler>();
         services.AddTransient<IUserQueryService, UserQueryService>();
+        services.AddTransient<ICommandHandler<LoginUserCommand, string>, LoginUserHandler>();
         return services;
     }
 }

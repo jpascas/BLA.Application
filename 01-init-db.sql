@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS public."user"
 (
     id bigint primary key generated always as identity,
     email text COLLATE pg_catalog."default" NOT NULL,
-    password text COLLATE pg_catalog."default" NOT NULL,    
+    password_hash text COLLATE pg_catalog."default" NOT NULL,    
     CONSTRAINT email_unique UNIQUE (email)
 )
 WITH (

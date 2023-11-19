@@ -31,10 +31,9 @@ namespace WebAPI.IntegrationTests.ControllerTests
         public async Task Create_WithValidInput_ShouldReturnStatus200AndUser()
         {
             var userModel = GenerateRandomValidUser();
-            var httpContent = new StringContent(JsonSerializer.Serialize(userModel), Encoding.UTF8, MediaTypeNames.Application.Json);
-            var response = await _client.PostAsync("/api/users", httpContent);
+            var response = await GetResponseFromCreateUser(userModel); ;
             var requestContent = await response.Content.ReadAsStringAsync();
-            var createUserResult = JsonSerializer.Deserialize<ApplicationUserIResultModel>(requestContent);
+            var createUserResult = JsonSerializer.Deserialize<ApplicationUserResultModel>(requestContent);
 
 
             response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
@@ -42,10 +41,71 @@ namespace WebAPI.IntegrationTests.ControllerTests
 
         }
 
-        public static ApplicationUserInsertModel GenerateRandomValidUser()
+        [Test]
+        public async Task Create_WithInvalidInput_ShouldReturnStatus400AndErrors()
+        {
+            var invalidUserModel = new ApplicationUserInsertRequestModel();
+            var response = await GetResponseFromCreateUser(invalidUserModel);
+            var requestContent = await response.Content.ReadAsStringAsync();
+            var errorsResult = JsonSerializer.Deserialize<ValidationErrorResult>(requestContent); // verify
+
+
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);            
+        }
+
+        [Test]
+        public async Task CreateAndLogin_WithValidInput_ShouldReturnStatus200AndToken()
+        {
+            var userModel = GenerateRandomValidUser();            
+            var response = await GetResponseFromCreateUser(userModel);
+            var requestContent = await response.Content.ReadAsStringAsync();
+            var createUserResult = JsonSerializer.Deserialize<ApplicationUserResultModel>(requestContent);
+
+            var loginRequest = new LoginRequestModel() { Email = createUserResult.Email, Password = userModel.Password };
+            var responseLogin = await GetResponseFromLoginUser(loginRequest);
+            var requestContentToken = await responseLogin.Content.ReadAsStringAsync();
+
+            responseLogin.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+            requestContentToken.Should().NotBeEmpty();
+        }
+
+        [Test]
+        public async Task CreateAndLogin_WithValidButNotExistantUser_ShouldReturnStatus401()
+        {
+            var userModel = GenerateRandomValidUser();            
+            var loginRequest = new LoginRequestModel() { Email = userModel.Email, Password = userModel.Password };
+            var responseLogin = await GetResponseFromLoginUser(loginRequest);            
+
+            responseLogin.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);            
+        }
+
+        [Test]
+        public async Task CreateAndLogin_WithInValidInput_ShouldReturnStatus200AndToken()
+        {
+            var loginRequest = new LoginRequestModel();
+            var responseLogin = await GetResponseFromLoginUser(loginRequest);
+
+            responseLogin.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+        }
+
+        public async Task<HttpResponseMessage> GetResponseFromCreateUser(ApplicationUserInsertRequestModel model)
+        {
+            var httpContent = new StringContent(JsonSerializer.Serialize(model), Encoding.UTF8, MediaTypeNames.Application.Json);
+            var response = await _client.PostAsync("/api/users", httpContent);
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> GetResponseFromLoginUser(LoginRequestModel model)
+        {
+            var httpContent = new StringContent(JsonSerializer.Serialize(model), Encoding.UTF8, MediaTypeNames.Application.Json);
+            var response = await _client.PostAsync("/api/users/login", httpContent);
+            return response;
+        }
+
+        public static ApplicationUserInsertRequestModel GenerateRandomValidUser()
         {
             string newUserName = Guid.NewGuid().ToString("N");
-            var user = new ApplicationUserInsertModel()
+            var user = new ApplicationUserInsertRequestModel()
             {
                 Email = newUserName + "@test.com",
                 Password = newUserName.Substring(0, 8) + "aA8."

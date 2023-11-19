@@ -35,4 +35,7 @@ jobs:
     - name: Test
       env:        
         ConnectionStrings__BLA: ${{ secrets.CONN_STRING }}
+        jwtTokenConfig__audience: ${{ secrets.jwtTokenConfig__audience }}
+        jwtTokenConfig__issuer: ${{ secrets.jwtTokenConfig__issuer }}
+        jwtTokenConfig__secretkey: ${{ secrets.jwtTokenConfig__secretkey }}
       run: dotnet test --no-restore

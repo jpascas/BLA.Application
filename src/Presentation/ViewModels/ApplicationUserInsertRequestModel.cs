@@ -7,9 +7,11 @@ using System.Text.Json.Serialization;
 
 namespace Presentation.ViewModels
 {    
-    public class ApplicationUserIResultModel
+    public class ApplicationUserInsertRequestModel 
     {        
         [JsonPropertyName("email")]
-        public string Email { get; set; }        
+        public string Email { get; set; }
+        [JsonPropertyName("password")]
+        public string Password { get; set; }
     }
 }
