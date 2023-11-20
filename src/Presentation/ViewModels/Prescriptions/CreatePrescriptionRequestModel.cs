@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Presentation.ViewModels.Prescriptions
 {
-    public class PrescriptionCreateRequestModel
+    public class CreatePrescriptionRequestModel
     {
         [JsonPropertyName("drug")]
         public string Drug { get; set; }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace Presentation.ViewModels
 {
@@ -9,6 +10,7 @@ namespace Presentation.ViewModels
         public ErrorResult()
         {            
         }
+        [JsonPropertyName("messages")]
         public List<string> Messages { get; set; } = new List<string>();
     }
 }

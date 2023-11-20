@@ -30,6 +30,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{11B775AA-16C8-4870-AD6F-4CD43CFBCCF7}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		.runsettings = .runsettings
 		app.env = app.env
 		.github\workflows\Build-and-analyze.yml = .github\workflows\Build-and-analyze.yml
 		.github\workflows\build-and-test.yml = .github\workflows\build-and-test.yml
@@ -56,7 +57,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Integration", "Integration"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Common", "test\Tests.Common\Tests.Common.csproj", "{B5369C11-C54C-425D-B97E-F0DF3772DA4E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.IntegrationTests", "test\Infrastructure.IntegrationTests\Infrastructure.IntegrationTests.csproj", "{A07B6F74-3E31-4D2D-82C1-E639C5F6620F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure.IntegrationTests", "test\Infrastructure.IntegrationTests\Infrastructure.IntegrationTests.csproj", "{A07B6F74-3E31-4D2D-82C1-E639C5F6620F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Presentation.UnitTests", "test\Presentation.UnitTests\Presentation.UnitTests.csproj", "{76514557-1CDC-4F0C-920C-B8707B0E4837}"
 EndProject

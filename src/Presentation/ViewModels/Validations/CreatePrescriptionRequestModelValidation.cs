@@ -8,9 +8,9 @@ using System.Text.RegularExpressions;
 
 namespace Presentation.ViewModels.Validations
 {
-    public class PrescriptionCreateRequestModelValidation : AbstractValidator<PrescriptionCreateRequestModel>
+    public class CreatePrescriptionRequestModelValidation : AbstractValidator<CreatePrescriptionRequestModel>
     {
-        public PrescriptionCreateRequestModelValidation()
+        public CreatePrescriptionRequestModelValidation()
         {
             ValidateDrug();
             ValidateDosage();

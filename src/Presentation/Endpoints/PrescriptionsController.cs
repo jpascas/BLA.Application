@@ -37,11 +37,30 @@ namespace Presentation.Endpoints
         
         [HttpPost("")]
         [FluentValidationAutoValidationAttribute]
-        public async Task<ActionResult> Create(PrescriptionCreateRequestModel createRequestModel)
+        public async Task<ActionResult> Create(CreatePrescriptionRequestModel createRequestModel)
         {
             var command = new CreatePrescriptionCommand(createRequestModel.Drug, createRequestModel.Dosage, createRequestModel.Notes);
 
             var prescriptionResult = await this.commandBus.Send<CreatePrescriptionCommand, Prescription>(command);
+
+            if (prescriptionResult.Success)
+            {
+                PrescriptionResultModel prescriptionModel = this.mapper.Map<Prescription, PrescriptionResultModel>(prescriptionResult.Result);
+                return Ok(prescriptionModel);
+            }
+            else
+            {
+                return ToFailureResult(prescriptionResult);
+            }
+        }
+
+        [HttpPut("")]
+        [FluentValidationAutoValidationAttribute]
+        public async Task<ActionResult> Update(UpdatePrescriptionRequestModel createRequestModel)
+        {
+            var command = new UpdatePrescriptionCommand(createRequestModel.Id, createRequestModel.Dosage, createRequestModel.Notes);
+
+            var prescriptionResult = await this.commandBus.Send<UpdatePrescriptionCommand, Prescription>(command);
 
             if (prescriptionResult.Success)
             {

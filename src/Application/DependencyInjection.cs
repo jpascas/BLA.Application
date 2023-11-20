@@ -11,7 +11,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        var assembly = typeof(DependencyInjection).Assembly;        
+        var assembly = typeof(DependencyInjection).Assembly;
 
         services.AddValidatorsFromAssembly(assembly);
 
@@ -20,7 +20,9 @@ public static class DependencyInjection
         services.AddTransient<IUserQueryService, UserQueryService>();
 
         services.AddTransient<ICommandHandler<CreatePrescriptionCommand, Prescription>, CreatePrescriptionHandler>();
+        services.AddTransient<ICommandHandler<UpdatePrescriptionCommand, Prescription>, UpdatePrescriptionHandler>();
         services.AddTransient<IPrescriptionQueryService, PrescriptionQueryService>();
+
         return services;
     }
 }

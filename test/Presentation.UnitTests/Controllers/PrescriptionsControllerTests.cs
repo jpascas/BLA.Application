@@ -32,7 +32,7 @@ namespace Presentation.UnitTests
             Mock<IMapper> mapperMock = new Mock<IMapper>();
 
             var sut = new PrescriptionsController(commandBusMock.Object, mapperMock.Object, null);
-            var sutInput = new PrescriptionCreateRequestModel() { Dosage = "", Drug = "", Notes = "" };
+            var sutInput = new CreatePrescriptionRequestModel() { Dosage = "", Drug = "", Notes = "" };
             var result = (await sut.Create(sutInput)) as ObjectResult;
 
             result.Should().NotBeNull();
@@ -43,7 +43,7 @@ namespace Presentation.UnitTests
         }
 
         [Test]
-        public async Task Create_WithValidInput_ShouldReturnStatus200AndUser()
+        public async Task Create_WithValidInput_ShouldReturnStatus200AndPrescription()
         {
             var returnsFromMock = new Prescription();
             Mock<ICommandBus> commandBusMock = new Mock<ICommandBus>();
@@ -54,7 +54,7 @@ namespace Presentation.UnitTests
             mapperMock.Setup(m => m.Map<Prescription, PrescriptionResultModel>(returnsFromMock)).Returns(returnsFromMapperMock);
 
             var sut = new PrescriptionsController(commandBusMock.Object, mapperMock.Object, null);
-            var sutInput = new PrescriptionCreateRequestModel() { Dosage = "Dosage", Drug = "Drug", Notes = "Notes" };
+            var sutInput = new CreatePrescriptionRequestModel() { Dosage = "Dosage", Drug = "Drug", Notes = "Notes" };
             var result = (await sut.Create(sutInput)) as OkObjectResult;
 
             result.Should().NotBeNull();
@@ -125,6 +125,48 @@ namespace Presentation.UnitTests
             result.StatusCode.Should().Be(404);            
             prescriptionQueryServiceMock.Verify(p => p.FindById(prescriptionId), Times.Once());
             mapperMock.Verify(p => p.Map<Prescription, PrescriptionResultModel>(It.IsAny<Prescription>()), Times.Never());
+        }
+
+        [Test]
+        public async Task Update_WithValidInput_ShouldReturnStatus200AndPrescription()
+        {
+            var prescriptionId = Guid.NewGuid();
+            var returnsFromMock = new Prescription() { Id = prescriptionId };
+            Mock<ICommandBus> commandBusMock = new Mock<ICommandBus>();
+            commandBusMock.Setup(s => s.Send<UpdatePrescriptionCommand, Prescription>(It.IsAny<UpdatePrescriptionCommand>())).Returns(Task.FromResult(OperationResult<Prescription>.SuccessResult(returnsFromMock)));
+
+            Mock<IMapper> mapperMock = new Mock<IMapper>();
+            var returnsFromMapperMock = new PrescriptionResultModel() { Id = prescriptionId };
+            mapperMock.Setup(m => m.Map<Prescription, PrescriptionResultModel>(returnsFromMock)).Returns(returnsFromMapperMock);
+
+            var sut = new PrescriptionsController(commandBusMock.Object, mapperMock.Object, null);
+            var sutInput = new UpdatePrescriptionRequestModel() { Id = prescriptionId,  Dosage = "Dosage",Notes = "Notes" };
+            var result = (await sut.Update(sutInput)) as OkObjectResult;
+
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(200);
+            result.Value.Should().BeOfType(typeof(PrescriptionResultModel));
+            result.Value.Should().Be(returnsFromMapperMock);
+            commandBusMock.Verify(p => p.Send<UpdatePrescriptionCommand, Prescription>(It.IsAny<UpdatePrescriptionCommand>()), Times.Once());
+            mapperMock.Verify(p => p.Map<Prescription, PrescriptionResultModel>(returnsFromMock), Times.Once());
+        }
+
+        [Test]
+        public async Task Update_WithInvalidInput_ShouldReturnStatus500AndError()
+        {
+            Mock<ICommandBus> commandBusMock = new Mock<ICommandBus>();
+            commandBusMock.Setup(s => s.Send<UpdatePrescriptionCommand, Prescription>(It.IsAny<UpdatePrescriptionCommand>())).Returns(Task.FromResult(OperationResult<Prescription>.FailureResult("")));
+            Mock<IMapper> mapperMock = new Mock<IMapper>();
+
+            var sut = new PrescriptionsController(commandBusMock.Object, mapperMock.Object, null);
+            var sutInput = new UpdatePrescriptionRequestModel() { Id = Guid.Empty, Dosage = "", Notes = "" };
+            var result = (await sut.Update(sutInput)) as ObjectResult;
+
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(500);
+            result.Value.Should().BeOfType(typeof(ErrorResult));
+            ((ErrorResult)result.Value).Messages.Should().NotBeEmpty();
+            commandBusMock.Verify(p => p.Send<UpdatePrescriptionCommand, Prescription>(It.IsAny<UpdatePrescriptionCommand>()), Times.Once());
         }
     }
 }

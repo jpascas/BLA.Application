@@ -19,27 +19,27 @@ namespace Infrastructure.Persistence.Repositories
         {
         }
 
-        public Task<Prescription> Create(Prescription user)
+        public Task<Prescription> Create(Prescription prescription)
         {
             List<NpgsqlParameter> parameters = new List<NpgsqlParameter>()
             {
-                        GetNamedParameter("p_user_id", user.UserId, NpgsqlTypes.NpgsqlDbType.Bigint),
-                        GetNamedParameter("p_drug", user.Drug, NpgsqlTypes.NpgsqlDbType.Text),
-                        GetNamedParameter("p_dosage", user.Dosage, NpgsqlTypes.NpgsqlDbType.Text),
-                        GetNamedParameter("p_notes", user.Notes, NpgsqlTypes.NpgsqlDbType.Text),
-                        GetNamedParameter("p_created_by", user.CreatedBy, NpgsqlTypes.NpgsqlDbType.Bigint),                        
+                        GetNamedParameter("p_user_id", prescription.UserId, NpgsqlTypes.NpgsqlDbType.Bigint),
+                        GetNamedParameter("p_drug", prescription.Drug, NpgsqlTypes.NpgsqlDbType.Text),
+                        GetNamedParameter("p_dosage", prescription.Dosage, NpgsqlTypes.NpgsqlDbType.Text),
+                        GetNamedParameter("p_notes", prescription.Notes, NpgsqlTypes.NpgsqlDbType.Text),
+                        GetNamedParameter("p_created_by", prescription.CreatedBy, NpgsqlTypes.NpgsqlDbType.Bigint),                        
             };                       
             return Task.FromResult(this.ExecuteAsSingleOrDefault<Prescription>("sp_insert_prescription", parameters.ToArray(), Mapper));            
         }
 
-        public Task<Prescription> Update(Prescription user)
+        public Task<Prescription> Update(Prescription prescription)
         {
             List<NpgsqlParameter> parameters = new List<NpgsqlParameter>()
             {
-                        GetNamedParameter("p_id", user.UserId, NpgsqlTypes.NpgsqlDbType.Uuid),                        
-                        GetNamedParameter("p_dosage", user.Dosage, NpgsqlTypes.NpgsqlDbType.Text),
-                        GetNamedParameter("p_notes", user.Notes, NpgsqlTypes.NpgsqlDbType.Text),
-                        GetNamedParameter("p_modified_by", user.CreatedBy, NpgsqlTypes.NpgsqlDbType.Bigint),
+                        GetNamedParameter("p_id", prescription.Id, NpgsqlTypes.NpgsqlDbType.Uuid),                        
+                        GetNamedParameter("p_dosage", prescription.Dosage, NpgsqlTypes.NpgsqlDbType.Text),
+                        GetNamedParameter("p_notes", prescription.Notes, NpgsqlTypes.NpgsqlDbType.Text),
+                        GetNamedParameter("p_modified_by", prescription.CreatedBy, NpgsqlTypes.NpgsqlDbType.Bigint),
             };
             return Task.FromResult(this.ExecuteAsSingleOrDefault<Prescription>("sp_update_prescription", parameters.ToArray(), Mapper));
         }

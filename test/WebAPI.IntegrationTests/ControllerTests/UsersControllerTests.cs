@@ -15,30 +15,37 @@ using System.Text.Json;
 
 namespace WebAPI.IntegrationTests.ControllerTests
 {
-    public class UsersControllerTests : IDisposable
-    {
-        private CustomWebApplicationFactory _factory;
-        private HttpClient _client;
-
-        public UsersControllerTests()
-        {
-            _factory = new CustomWebApplicationFactory();
-            _client = _factory.CreateClient();
-        }
-
-
-        [Test]
-        public async Task Create_WithValidInput_ShouldReturnStatus200AndUser()
+    public class UsersControllerTests : BaseControllerTests
+    {      
+        public async Task<CreateUserRequestModel> CreateUser()
         {
             var userModel = GenerateRandomValidUser();
             var response = await GetResponseFromCreateUser(userModel); ;
             var requestContent = await response.Content.ReadAsStringAsync();
             var createUserResult = JsonSerializer.Deserialize<UserResultModel>(requestContent);
 
-
             response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
             createUserResult.Email.Should().Be(userModel.Email);
+            return userModel;
+        }
 
+        public async Task<string> LoginUser()
+        {
+            var userModel = await CreateUser();
+
+            var loginRequest = new LoginUserRequestModel() { Email = userModel.Email, Password = userModel.Password };
+            var responseLogin = await GetResponseFromLoginUser(loginRequest);
+            var requestContentToken = await responseLogin.Content.ReadAsStringAsync();
+
+            responseLogin.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+            requestContentToken.Should().NotBeEmpty();
+            return requestContentToken;
+        }
+
+        [Test]
+        public async Task Create_WithValidInput_ShouldReturnStatus200AndUser()
+        {
+            await CreateUser();
         }
 
         [Test]
@@ -56,17 +63,7 @@ namespace WebAPI.IntegrationTests.ControllerTests
         [Test]
         public async Task CreateAndLogin_WithValidInput_ShouldReturnStatus200AndToken()
         {
-            var userModel = GenerateRandomValidUser();            
-            var response = await GetResponseFromCreateUser(userModel);
-            var requestContent = await response.Content.ReadAsStringAsync();
-            var createUserResult = JsonSerializer.Deserialize<UserResultModel>(requestContent);
-
-            var loginRequest = new LoginUserRequestModel() { Email = createUserResult.Email, Password = userModel.Password };
-            var responseLogin = await GetResponseFromLoginUser(loginRequest);
-            var requestContentToken = await responseLogin.Content.ReadAsStringAsync();
-
-            responseLogin.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
-            requestContentToken.Should().NotBeEmpty();
+            await LoginUser();
         }
 
         [Test]
@@ -111,12 +108,6 @@ namespace WebAPI.IntegrationTests.ControllerTests
                 Password = newUserName.Substring(0, 8) + "aA8."
             };
             return user;
-        }
-
-        public void Dispose()
-        {
-            _client.Dispose();
-            _factory.Dispose();
         }
     }
 }

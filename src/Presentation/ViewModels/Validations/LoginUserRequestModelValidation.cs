@@ -7,9 +7,9 @@ using System.Text.RegularExpressions;
 
 namespace Presentation.ViewModels.Validations
 {
-    public class LoginRequestModelValidation : AbstractValidator<LoginUserRequestModel>
+    public class LoginUserRequestModelValidation : AbstractValidator<LoginUserRequestModel>
     {
-        public LoginRequestModelValidation()
+        public LoginUserRequestModelValidation()
         {
             ValidateEmail();
             ValidatePassword();
