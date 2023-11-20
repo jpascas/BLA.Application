@@ -48,7 +48,7 @@ jobs:
           jwtTokenConfig__secretkey: ${{ secrets.jwtTokenConfig__secretkey }}
         shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"jpascas_bla-application" /o:"jpascas" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths=dotCover.Output.html
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"jpascas_bla-application" /o:"jpascas" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.dotcover.reportsPaths=dotCover.Output.html
           dotnet tool install --global JetBrains.dotCover.GlobalTool
           dotnet build --no-incremental
           dotnet dotcover test --dcReportType=HTML
