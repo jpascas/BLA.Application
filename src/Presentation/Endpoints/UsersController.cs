@@ -31,16 +31,16 @@ namespace Presentation.Endpoints
 
         [HttpPost("")]
         [FluentValidationAutoValidationAttribute]
-        public async Task<ActionResult> Create([FromBody] ApplicationUserInsertRequestModel userModel)
+        public async Task<ActionResult> Create([FromBody] CreateUserRequestModel createRequestModel)
         {            
-            var command = new CreateUserCommand(userModel.Email, userModel.Password);
+            var command = new CreateUserCommand(createRequestModel.Email, createRequestModel.Password);
 
             var userResult = await this.commandBus.Send<CreateUserCommand, User>(command);
 
             if (userResult.Success)
             {
-                ApplicationUserResultModel applicationUser = this.mapper.Map<User, ApplicationUserResultModel>(userResult.Result);
-                return Ok(applicationUser);
+                UserResultModel userModel = this.mapper.Map<User, UserResultModel>(userResult.Result);
+                return Ok(userModel);
             }
             else
             {                
@@ -50,9 +50,9 @@ namespace Presentation.Endpoints
 
         [HttpPost("login")]
         [FluentValidationAutoValidationAttribute]
-        public async Task<ActionResult> Login([FromBody] LoginRequestModel loginModel)
+        public async Task<ActionResult> Login([FromBody] LoginUserRequestModel loginRequestModel)
         {
-            var command = new LoginUserCommand(loginModel.Email, loginModel.Password);
+            var command = new LoginUserCommand(loginRequestModel.Email, loginRequestModel.Password);
 
             var tokenResult = await this.commandBus.Send<LoginUserCommand, string>(command);
 

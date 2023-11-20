@@ -21,7 +21,7 @@ namespace Application.Commands
 
         public override bool IsValid()
         {
-            var validator = new LoginValidation();
+            var validator = new LoginUserValidation();
             this.ValidationResult = validator.Validate(this);
             return this.ValidationResult.IsValid;
         }

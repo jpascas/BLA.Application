@@ -16,6 +16,7 @@ using SharpGrip.FluentValidation.AutoValidation.Mvc.Attributes;
 using Application.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Presentation.ViewModels.Prescriptions;
 
 namespace Presentation.Endpoints
 {
@@ -25,22 +26,57 @@ namespace Presentation.Endpoints
     {
         private readonly IMapper mapper;
         private readonly ICommandBus commandBus;
-        private readonly IUserQueryService userQueryService;
+        private readonly IPrescriptionQueryService prescriptionQueryService;
 
-        public PrescriptionsController(ICommandBus commandBus, IMapper mapper)
+        public PrescriptionsController(ICommandBus commandBus, IMapper mapper, IPrescriptionQueryService prescriptionQueryService)
         {
             this.commandBus = commandBus;            
             this.mapper = mapper;
+            this.prescriptionQueryService = prescriptionQueryService;
         }
-
+        
         [HttpPost("")]
         [FluentValidationAutoValidationAttribute]
-        public async Task<ActionResult> Create()
+        public async Task<ActionResult> Create(PrescriptionCreateRequestModel createRequestModel)
         {
-            var currentUserId = this.GetCurrentUserId();
-            return Ok();
+            var command = new CreatePrescriptionCommand(createRequestModel.Drug, createRequestModel.Dosage, createRequestModel.Notes);
+
+            var prescriptionResult = await this.commandBus.Send<CreatePrescriptionCommand, Prescription>(command);
+
+            if (prescriptionResult.Success)
+            {
+                PrescriptionResultModel prescriptionModel = this.mapper.Map<Prescription, PrescriptionResultModel>(prescriptionResult.Result);
+                return Ok(prescriptionModel);
+            }
+            else
+            {
+                return ToFailureResult(prescriptionResult);
+            }
         }
 
-       
+        [HttpGet("")]
+        [FluentValidationAutoValidationAttribute]
+        public async Task<ActionResult> GetAllByCurrentUser()
+        {
+            var prescriptions = await this.prescriptionQueryService.FindByCurrentUserId();
+            var prescriptionModels = prescriptions.Select(prescription => this.mapper.Map<Prescription, PrescriptionResultModel>(prescription)).ToList();
+            return Ok(prescriptionModels);            
+        }
+
+        [HttpGet("{id}")]
+        [FluentValidationAutoValidationAttribute]
+        public async Task<ActionResult> GetById(Guid id)
+        {
+            var prescription = await this.prescriptionQueryService.FindById(id);
+            if (prescription != null)
+            {
+                var prescriptionModel = this.mapper.Map<Prescription, PrescriptionResultModel>(prescription);
+                return Ok(prescriptionModel);
+            }
+            else
+                return NotFound(null);
+        }
+
+
     }
 }

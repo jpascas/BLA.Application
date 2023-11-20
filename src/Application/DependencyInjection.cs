@@ -14,9 +14,13 @@ public static class DependencyInjection
         var assembly = typeof(DependencyInjection).Assembly;        
 
         services.AddValidatorsFromAssembly(assembly);
+
         services.AddTransient<ICommandHandler<CreateUserCommand, User>, CreateUserHandler>();
-        services.AddTransient<IUserQueryService, UserQueryService>();
         services.AddTransient<ICommandHandler<LoginUserCommand, string>, LoginUserHandler>();
+        services.AddTransient<IUserQueryService, UserQueryService>();
+
+        services.AddTransient<ICommandHandler<CreatePrescriptionCommand, Prescription>, CreatePrescriptionHandler>();
+        services.AddTransient<IPrescriptionQueryService, PrescriptionQueryService>();
         return services;
     }
 }

@@ -27,7 +27,7 @@ namespace Presentation.UnitTests
             Mock<IMapper> mapperMock = new Mock<IMapper>();
             var sut = new UsersController(commandBusMock.Object, mapperMock.Object);
 
-            var sutInput = new ApplicationUserInsertRequestModel() { Email = Constants.UserConstants.INVALID_EMAIL , Password = Constants.UserConstants.INVALID_PASSWORD };
+            var sutInput = new CreateUserRequestModel() { Email = Constants.UserConstants.INVALID_EMAIL , Password = Constants.UserConstants.INVALID_PASSWORD };
             var result = (await sut.Create(sutInput)) as ObjectResult;
 
             result.Should().NotBeNull();
@@ -46,19 +46,19 @@ namespace Presentation.UnitTests
 
             Mock<IMapper> mapperMock = new Mock<IMapper>();
 
-            var returnsFromMapperMock = new ApplicationUserResultModel() { Email = Constants.UserConstants.VALID_EMAIL };
-            mapperMock.Setup(m => m.Map<User, ApplicationUserResultModel>(returnsFromMock)).Returns(returnsFromMapperMock);
+            var returnsFromMapperMock = new UserResultModel() { Email = Constants.UserConstants.VALID_EMAIL };
+            mapperMock.Setup(m => m.Map<User, UserResultModel>(returnsFromMock)).Returns(returnsFromMapperMock);
             var sut = new UsersController(commandBusMock.Object, mapperMock.Object);
 
-            var sutInput = new ApplicationUserInsertRequestModel() { Email = Constants.UserConstants.VALID_EMAIL, Password = Constants.UserConstants.VALID_PASSWORD };
+            var sutInput = new CreateUserRequestModel() { Email = Constants.UserConstants.VALID_EMAIL, Password = Constants.UserConstants.VALID_PASSWORD };
             var result = (await sut.Create(sutInput)) as OkObjectResult;
 
             result.Should().NotBeNull();
             result.StatusCode.Should().Be(200);
-            result.Value.Should().BeOfType(typeof(ApplicationUserResultModel));
-            ((ApplicationUserResultModel)result.Value).Email.Should().Be(Constants.UserConstants.VALID_EMAIL);
+            result.Value.Should().BeOfType(typeof(UserResultModel));
+            ((UserResultModel)result.Value).Email.Should().Be(Constants.UserConstants.VALID_EMAIL);
             commandBusMock.Verify(p => p.Send<CreateUserCommand, User>(It.IsAny<CreateUserCommand>()), Times.Once());            
-            mapperMock.Verify(p => p.Map<User, ApplicationUserResultModel>(It.IsAny<User>()), Times.Once());
+            mapperMock.Verify(p => p.Map<User, UserResultModel>(It.IsAny<User>()), Times.Once());
         }
 
 
@@ -69,7 +69,7 @@ namespace Presentation.UnitTests
             commandBusMock.Setup(s => s.Send<LoginUserCommand, string>(It.IsAny<LoginUserCommand>())).Returns(Task.FromResult(OperationResult<string>.FailureResult("")));            
             var sut = new UsersController(commandBusMock.Object, null);
 
-            var sutInput = new LoginRequestModel() { Email = Constants.UserConstants.INVALID_EMAIL, Password = Constants.UserConstants.INVALID_PASSWORD };
+            var sutInput = new LoginUserRequestModel() { Email = Constants.UserConstants.INVALID_EMAIL, Password = Constants.UserConstants.INVALID_PASSWORD };
             var result = (await sut.Login(sutInput)) as ObjectResult;
 
             result.Should().NotBeNull();
@@ -88,7 +88,7 @@ namespace Presentation.UnitTests
             
             var sut = new UsersController(commandBusMock.Object, null);
 
-            var sutInput = new LoginRequestModel() { Email = Constants.UserConstants.VALID_EMAIL, Password = Constants.UserConstants.VALID_PASSWORD };
+            var sutInput = new LoginUserRequestModel() { Email = Constants.UserConstants.VALID_EMAIL, Password = Constants.UserConstants.VALID_PASSWORD };
             var result = (await sut.Login(sutInput)) as ObjectResult;
 
             result.Should().NotBeNull();

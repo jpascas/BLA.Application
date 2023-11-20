@@ -32,7 +32,9 @@ namespace Infrastructure.Identity.JWT
                 new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.SecretKey)),
                 SecurityAlgorithms.HmacSha256);
 
-            var token = new JwtSecurityToken(issuer: this._jwtOptions.Issuer,audience: this._jwtOptions.Audience, claims: claims,expires: DateTime.UtcNow.AddMinutes(this._jwtOptions.AccessTokenExpiration),signingCredentials: signingCredentials);
+            var token = new JwtSecurityToken(issuer: this._jwtOptions.Issuer,audience: this._jwtOptions.Audience, 
+                claims: claims,expires: DateTime.UtcNow.AddMinutes(this._jwtOptions.AccessTokenExpiration),
+                signingCredentials: signingCredentials);
 
             string tokenValue = new JwtSecurityTokenHandler().WriteToken(token);
 

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Presentation.ViewModels
 {
-    public class LoginRequestModel
+    public class LoginUserRequestModel
     {
         [JsonPropertyName("email")]
         public string Email { get; set; }

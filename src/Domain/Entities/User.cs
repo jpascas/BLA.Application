@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Domain.Entities
 {
-    public class User : AuditableEntity
+    public class User
     {
         public long Id { get; set; }                
         public string Email { get; set; }

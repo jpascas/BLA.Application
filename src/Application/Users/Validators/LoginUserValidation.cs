@@ -6,11 +6,11 @@ using System.Text;
 
 namespace Application.Validations
 {
-    public class LoginValidation : AbstractValidator<LoginUserCommand>
+    public class LoginUserValidation : AbstractValidator<LoginUserCommand>
     {
    
 
-        public LoginValidation()
+        public LoginUserValidation()
         {
             ValidateEmail();
             ValidatePassword();            

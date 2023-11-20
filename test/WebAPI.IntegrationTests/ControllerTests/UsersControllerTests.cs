@@ -33,7 +33,7 @@ namespace WebAPI.IntegrationTests.ControllerTests
             var userModel = GenerateRandomValidUser();
             var response = await GetResponseFromCreateUser(userModel); ;
             var requestContent = await response.Content.ReadAsStringAsync();
-            var createUserResult = JsonSerializer.Deserialize<ApplicationUserResultModel>(requestContent);
+            var createUserResult = JsonSerializer.Deserialize<UserResultModel>(requestContent);
 
 
             response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
@@ -44,7 +44,7 @@ namespace WebAPI.IntegrationTests.ControllerTests
         [Test]
         public async Task Create_WithInvalidInput_ShouldReturnStatus400AndErrors()
         {
-            var invalidUserModel = new ApplicationUserInsertRequestModel();
+            var invalidUserModel = new CreateUserRequestModel();
             var response = await GetResponseFromCreateUser(invalidUserModel);
             var requestContent = await response.Content.ReadAsStringAsync();
             var errorsResult = JsonSerializer.Deserialize<ValidationErrorResult>(requestContent); // verify
@@ -59,9 +59,9 @@ namespace WebAPI.IntegrationTests.ControllerTests
             var userModel = GenerateRandomValidUser();            
             var response = await GetResponseFromCreateUser(userModel);
             var requestContent = await response.Content.ReadAsStringAsync();
-            var createUserResult = JsonSerializer.Deserialize<ApplicationUserResultModel>(requestContent);
+            var createUserResult = JsonSerializer.Deserialize<UserResultModel>(requestContent);
 
-            var loginRequest = new LoginRequestModel() { Email = createUserResult.Email, Password = userModel.Password };
+            var loginRequest = new LoginUserRequestModel() { Email = createUserResult.Email, Password = userModel.Password };
             var responseLogin = await GetResponseFromLoginUser(loginRequest);
             var requestContentToken = await responseLogin.Content.ReadAsStringAsync();
 
@@ -73,7 +73,7 @@ namespace WebAPI.IntegrationTests.ControllerTests
         public async Task CreateAndLogin_WithValidButNotExistantUser_ShouldReturnStatus401()
         {
             var userModel = GenerateRandomValidUser();            
-            var loginRequest = new LoginRequestModel() { Email = userModel.Email, Password = userModel.Password };
+            var loginRequest = new LoginUserRequestModel() { Email = userModel.Email, Password = userModel.Password };
             var responseLogin = await GetResponseFromLoginUser(loginRequest);            
 
             responseLogin.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);            
@@ -82,30 +82,30 @@ namespace WebAPI.IntegrationTests.ControllerTests
         [Test]
         public async Task CreateAndLogin_WithInValidInput_ShouldReturnStatus200AndToken()
         {
-            var loginRequest = new LoginRequestModel();
+            var loginRequest = new LoginUserRequestModel();
             var responseLogin = await GetResponseFromLoginUser(loginRequest);
 
             responseLogin.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
         }
 
-        public async Task<HttpResponseMessage> GetResponseFromCreateUser(ApplicationUserInsertRequestModel model)
+        public async Task<HttpResponseMessage> GetResponseFromCreateUser(CreateUserRequestModel model)
         {
             var httpContent = new StringContent(JsonSerializer.Serialize(model), Encoding.UTF8, MediaTypeNames.Application.Json);
             var response = await _client.PostAsync("/api/users", httpContent);
             return response;
         }
 
-        public async Task<HttpResponseMessage> GetResponseFromLoginUser(LoginRequestModel model)
+        public async Task<HttpResponseMessage> GetResponseFromLoginUser(LoginUserRequestModel model)
         {
             var httpContent = new StringContent(JsonSerializer.Serialize(model), Encoding.UTF8, MediaTypeNames.Application.Json);
             var response = await _client.PostAsync("/api/users/login", httpContent);
             return response;
         }
 
-        public static ApplicationUserInsertRequestModel GenerateRandomValidUser()
+        public static CreateUserRequestModel GenerateRandomValidUser()
         {
             string newUserName = Guid.NewGuid().ToString("N");
-            var user = new ApplicationUserInsertRequestModel()
+            var user = new CreateUserRequestModel()
             {
                 Email = newUserName + "@test.com",
                 Password = newUserName.Substring(0, 8) + "aA8."

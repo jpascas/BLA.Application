@@ -13,8 +13,11 @@ namespace Presentation.Mapping
     {
         public AutoMappingProfile()
         {
-            CreateMap<User, ApplicationUserResultModel>()
-                .ReverseMap();           
+            CreateMap<User, UserResultModel>()
+                .ReverseMap();
+            CreateMap<Prescription, PrescriptionResultModel>()
+                .ReverseMap();
+            
         }
     }
 }

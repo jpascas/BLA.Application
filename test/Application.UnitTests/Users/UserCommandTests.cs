@@ -28,7 +28,8 @@ namespace Application.UnitTests
             sut.IsValid().Should().BeTrue();
 
         }
-
+        
+        [Test]
         public void Constructor_PassInvalidParameters_IsValidIsFalse()
         {
             var sut = new CreateUserCommand(Constants.UserConstants.INVALID_EMAIL, Constants.UserConstants.INVALID_PASSWORD);

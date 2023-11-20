@@ -26,6 +26,8 @@ public static class DependencyInjection
         BLADBConnectionConfig ConnectionConfig = new BLADBConnectionConfig(config.GetConnectionString("BLA"));        
         services.AddSingleton<BLADBConnectionConfig>(ConnectionConfig);        
         services.AddTransient<IUserRepository, UserRepository>();
+        services.AddTransient<IPrescriptionRepository, PrescriptionRepository>();
+        
         services.AddTransient<ICommandBus, InmediateExecutionCommandBus>();
 
         services.AddTransient<IJwtProvider, JwtProvider>();
