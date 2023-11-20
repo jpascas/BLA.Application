@@ -8,7 +8,7 @@ namespace Infrastructure.Persistency.Repositories
     public class PostgresqlRepositoryBase<TConfig> where TConfig : IDBConnectionConfig
     {        
         private readonly string ConnectionString;        
-        public PostgresqlRepositoryBase(IDBConnectionConfig config)
+        public PostgresqlRepositoryBase(TConfig config)
         {
             this.ConnectionString = config.ConnectionString;            
         }
@@ -19,7 +19,7 @@ namespace Infrastructure.Persistency.Repositories
             return conn;
         }
 
-        private NpgsqlCommand GetCommand(string functionName, NpgsqlConnection conn, NpgsqlParameter[] parameters, NpgsqlTransaction transaction = null)
+        private static NpgsqlCommand GetCommand(string functionName, NpgsqlConnection conn, NpgsqlParameter[] parameters, NpgsqlTransaction transaction = null)
         {
             var cmd = new NpgsqlCommand(functionName, conn);
             cmd.Transaction = transaction;

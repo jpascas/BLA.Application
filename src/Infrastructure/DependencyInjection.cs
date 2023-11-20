@@ -23,8 +23,8 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration config)
     {
-        BLADBConnectionConfig ConnectionConfig = new BLADBConnectionConfig(config.GetConnectionString("BLA"));        
-        services.AddSingleton<BLADBConnectionConfig>(ConnectionConfig);        
+        BlaDBConnectionConfig ConnectionConfig = new BlaDBConnectionConfig(config.GetConnectionString("BLA"));        
+        services.AddSingleton<BlaDBConnectionConfig>(ConnectionConfig);        
         services.AddTransient<IUserRepository, UserRepository>();
         services.AddTransient<IPrescriptionRepository, PrescriptionRepository>();
         

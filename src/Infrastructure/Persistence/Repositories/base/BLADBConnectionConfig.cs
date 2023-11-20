@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Infrastructure.Persistency.Repositories
 {
-    public class BLADBConnectionConfig : IDBConnectionConfig
+    public class BlaDBConnectionConfig : IDBConnectionConfig
     {
-        public BLADBConnectionConfig(string connectionString)
+        public BlaDBConnectionConfig(string connectionString)
         {
             ConnectionString = connectionString;
         }

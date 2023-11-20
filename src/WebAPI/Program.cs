@@ -25,8 +25,8 @@ namespace BLA.Application
 
             builder.Services
                 .AddApplication()
-                .AddInfrastructure(builder.Configuration)
-                .AddPresentation(); // contains  services.AddControllers();
+                .AddInfrastructure(configuration)
+                .AddPresentation();
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options =>
@@ -59,7 +59,7 @@ namespace BLA.Application
                 options.AddSecurityDefinition(securityScheme.Reference.Id, securityScheme);
                 options.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
-                    {securityScheme, new string[] { }}
+                    {securityScheme, Array.Empty<string>()}
                 });
             });
 
@@ -82,11 +82,7 @@ namespace BLA.Application
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(options =>
-                    {
-                        // options.SwaggerEndpoint("/api-docs/v1/swagger.json", "BLA API v1");
-                        //options.RoutePrefix = "api-docs";
-                    });
+                app.UseSwaggerUI();
             }
 
             app.Run();

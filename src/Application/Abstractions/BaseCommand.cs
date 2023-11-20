@@ -9,7 +9,7 @@ namespace Application.Commands
     public abstract class BaseCommand : ICommand
     {
 
-        public BaseCommand() 
+        protected BaseCommand() 
         {
             CommandResult = new CommandResult();
         }

@@ -14,7 +14,7 @@ namespace Presentation.Endpoints
     [ApiController]
     public abstract class ApiController : ControllerBase
     {
-        public ApiController() { }
+        protected ApiController() { }
 
         protected ObjectResult ToFailureResult<T>(OperationResult<T> operationResult, int defaultCode = 500)
         {

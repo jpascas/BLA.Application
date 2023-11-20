@@ -13,9 +13,9 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Infrastructure.Persistence.Repositories
 {
-    public class PrescriptionRepository : PostgresqlRepositoryBase<BLADBConnectionConfig>, IPrescriptionRepository
+    public class PrescriptionRepository : PostgresqlRepositoryBase<BlaDBConnectionConfig>, IPrescriptionRepository
     {
-        public PrescriptionRepository(BLADBConnectionConfig config) : base(config)
+        public PrescriptionRepository(BlaDBConnectionConfig config) : base(config)
         {
         }
 
@@ -71,7 +71,7 @@ namespace Infrastructure.Persistence.Repositories
             return Task.FromResult(this.ExecuteAsList<Prescription>("sp_getbyuserid_prescription", parameters, Mapper));
         }
 
-        public Prescription Mapper(NpgsqlDataReader reader)
+        public static Prescription Mapper(NpgsqlDataReader reader)
         {
             Prescription prescription = new Prescription();
             prescription.Id = reader.Get<Guid>("id");

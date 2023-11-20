@@ -9,7 +9,7 @@ namespace Domain.Repositories
     {
         Task<Prescription> GetById(Guid id);
         Task<List<Prescription>> GetByUserId(long userId);
-        Task Delete(Guid Id);
+        Task Delete(Guid id);
         Task<Prescription> Create(Prescription prescription);
         Task<Prescription> Update(Prescription prescription);
     }

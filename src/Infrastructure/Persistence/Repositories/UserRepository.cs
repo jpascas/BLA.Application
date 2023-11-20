@@ -11,9 +11,9 @@ using Npgsql;
 
 namespace Infrastructure.Persistence.Repositories
 {
-    public class UserRepository : PostgresqlRepositoryBase<BLADBConnectionConfig>, IUserRepository
+    public class UserRepository : PostgresqlRepositoryBase<BlaDBConnectionConfig>, IUserRepository
     {
-        public UserRepository(BLADBConnectionConfig config) : base(config)
+        public UserRepository(BlaDBConnectionConfig config) : base(config)
         {
         }
 
@@ -50,7 +50,7 @@ namespace Infrastructure.Persistence.Repositories
             return Task.FromResult(this.ExecuteAsSingleOrDefault<User>("sp_getbyid_user", parameters, Mapper));
         }
 
-        public User Mapper(NpgsqlDataReader reader)
+        public static User Mapper(NpgsqlDataReader reader)
         {
             User user = new User();
             user.Id = reader.Get<long>("id");
