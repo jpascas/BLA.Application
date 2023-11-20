@@ -1,0 +1,41 @@
+name: Build and Test
+
+on:
+  push:
+    branches:
+      - master
+      - development
+  pull_request:
+    types: [opened, synchronize, reopened]
+env:
+  DOTNET_VERSION: '7.0.404' # The .NET SDK version to use
+
+jobs:
+  build-and-test:
+
+    name: build-and-test-${{matrix.os}}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Install dependencies
+      run: dotnet restore
+      
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    
+    - name: Test
+      env:        
+        ConnectionStrings__BLA: ${{ secrets.CONN_STRING }}
+        jwtTokenConfig__audience: ${{ secrets.jwtTokenConfig__audience }}
+        jwtTokenConfig__issuer: ${{ secrets.jwtTokenConfig__issuer }}
+        jwtTokenConfig__secretkey: ${{ secrets.jwtTokenConfig__secretkey }}
+      run: dotnet test --no-restore

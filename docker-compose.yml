@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  api-service:
+    build: ./src/WebAPI
+    container_name: api-service
+    ports:
+     - "80:80"
+    env_file:
+      - ./app.env    
+  db:
+    image: postgres:latest
+    container_name: db
+    restart: always    
+    env_file:
+      - db.env
+    volumes:
+      - ./dbinit:/docker-entrypoint-initdb.d/           
+    ports:
+      - 5432:5432  
