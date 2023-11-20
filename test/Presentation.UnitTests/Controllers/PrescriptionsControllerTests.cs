@@ -168,5 +168,41 @@ namespace Presentation.UnitTests
             ((ErrorResult)result.Value).Messages.Should().NotBeEmpty();
             commandBusMock.Verify(p => p.Send<UpdatePrescriptionCommand, Prescription>(It.IsAny<UpdatePrescriptionCommand>()), Times.Once());
         }
+
+        [Test]
+        public async Task Delete_WithValidInput_ShouldReturnStatus200()
+        {
+            var prescriptionId = Guid.NewGuid();
+            var returnsFromMock = new Prescription() { Id = prescriptionId };
+            Mock<ICommandBus> commandBusMock = new Mock<ICommandBus>();
+            commandBusMock.Setup(s => s.Send<DeletePrescriptionCommand, Nothing>(It.IsAny<DeletePrescriptionCommand>())).Returns(Task.FromResult(OperationResult<Nothing>.SuccessResult(null)));
+            
+
+            var sut = new PrescriptionsController(commandBusMock.Object, null, null);            
+            var result = (await sut.Delete(prescriptionId)) as OkResult;
+
+            result.StatusCode.Should().Be(200);                        
+            commandBusMock.Verify(p => p.Send<DeletePrescriptionCommand, Nothing>(It.IsAny<DeletePrescriptionCommand>()), Times.Once());            
+        }
+
+
+        [Test]
+        public async Task Delete_WithInvalidInput_ShouldReturnStatus500AndError()
+        {
+            var prescriptionId = Guid.NewGuid();
+            var returnsFromMock = new Prescription() { Id = prescriptionId };
+            Mock<ICommandBus> commandBusMock = new Mock<ICommandBus>();
+            commandBusMock.Setup(s => s.Send<DeletePrescriptionCommand, Nothing>(It.IsAny<DeletePrescriptionCommand>())).Returns(Task.FromResult(OperationResult<Nothing>.FailureResult("")));
+
+
+            var sut = new PrescriptionsController(commandBusMock.Object, null, null);            
+            var result = (await sut.Delete(prescriptionId)) as ObjectResult;
+
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(500);
+            result.Value.Should().BeOfType(typeof(ErrorResult));
+            ((ErrorResult)result.Value).Messages.Should().NotBeEmpty();
+            commandBusMock.Verify(p => p.Send<DeletePrescriptionCommand, Nothing>(It.IsAny<DeletePrescriptionCommand>()), Times.Once());
+        }
     }
 }

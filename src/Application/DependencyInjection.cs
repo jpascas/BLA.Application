@@ -1,4 +1,5 @@
-﻿using Application.Commands;
+﻿using Application.Abstractions;
+using Application.Commands;
 using Application.Handlers;
 using Application.Queries;
 using Domain.Entities;
@@ -21,6 +22,7 @@ public static class DependencyInjection
 
         services.AddTransient<ICommandHandler<CreatePrescriptionCommand, Prescription>, CreatePrescriptionHandler>();
         services.AddTransient<ICommandHandler<UpdatePrescriptionCommand, Prescription>, UpdatePrescriptionHandler>();
+        services.AddTransient<ICommandHandler<DeletePrescriptionCommand, Nothing>, DeletePrescriptionHandler>();        
         services.AddTransient<IPrescriptionQueryService, PrescriptionQueryService>();
 
         return services;

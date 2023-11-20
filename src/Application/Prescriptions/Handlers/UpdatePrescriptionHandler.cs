@@ -26,12 +26,20 @@ namespace Application.Handlers
             if (!command.IsValid())
                 return OperationResult<Prescription>.FailureResult("Input is Invalid");
 
-            var currentUserId = this.contextProvider.GetCurrentUserId();
-            var newPrescription = new Prescription() {
+            var currentUserId = this.contextProvider.GetCurrentUserId();            
+            // check if the prescription exists and belongs to the user
+            var existentPrescription = await this.repository.GetById(command.Id);
+            if (existentPrescription == null || existentPrescription.UserId != currentUserId)
+                return OperationResult<Prescription>.FailureResult("Prescription Not Found", 404);
+
+            var prescriptionToUpdate = new Prescription()
+            {
                 Id = command.Id,
-                Dosage = command.Dosage, Notes = command.Notes, ModifiedBy = currentUserId
+                Dosage = command.Dosage,
+                Notes = command.Notes,
+                ModifiedBy = currentUserId
             };
-            var updatedPrescription = await this.repository.Update(newPrescription);
+            var updatedPrescription = await this.repository.Update(prescriptionToUpdate);
             return OperationResult<Prescription>.SuccessResult(updatedPrescription);
         }
     }

@@ -150,6 +150,35 @@ namespace WebAPI.IntegrationTests.ControllerTests
         }
 
         [Test]
+        public async Task Update_WithAnotherUserPrescription_ShouldReturnStatus404()
+        {
+            string token = await new UsersControllerTests().LoginUser();
+            var newPrescription = await CreateNewPrescription(token);
+            UpdatePrescriptionRequestModel modifiedModel = new UpdatePrescriptionRequestModel();
+            modifiedModel.Id = newPrescription.Id;
+            modifiedModel.Dosage = newPrescription.Dosage + "_modified";
+            modifiedModel.Notes = newPrescription.Notes + "_modified";
+            string anotherUsertoken = await new UsersControllerTests().LoginUser();
+            var response = await GetResponseFromUpdatePrescription(modifiedModel, anotherUsertoken); ;            
+
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);            
+        }
+
+
+        [Test]
+        public async Task Update_WithNonExistantPrescription_ShouldReturnStatus404()
+        {
+            string token = await new UsersControllerTests().LoginUser();            
+            UpdatePrescriptionRequestModel modifiedModel = new UpdatePrescriptionRequestModel();
+            modifiedModel.Id = Guid.NewGuid(); // random id
+            modifiedModel.Dosage = "dosage_modified";
+            modifiedModel.Notes = "notes_modified";            
+            var response = await GetResponseFromUpdatePrescription(modifiedModel, token); ;
+
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+        }
+
+        [Test]
         public async Task Update_WithInvalidInput_ShouldReturnStatus400AndError()
         {
             string token = await new UsersControllerTests().LoginUser();
@@ -162,6 +191,42 @@ namespace WebAPI.IntegrationTests.ControllerTests
             response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
             errorsResult.Should().NotBeNull();
             errorsResult.ValidationErrors.Should().NotBeEmpty();
+        }
+
+
+        [Test]
+        public async Task Delete_WithInvalidToken_ShouldReturnStatus401()
+        {
+            string token = string.Empty;
+            var response = await GetResponseFromDeletePrescription(Guid.NewGuid(), token);
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
+        }
+
+        [Test]
+        public async Task Delete_WithNonExistentPrescriptionId_ShouldReturn404()
+        {
+            string token = await new UsersControllerTests().LoginUser();
+            var response = await GetResponseFromDeletePrescription(Guid.NewGuid(), token);
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+        }
+
+        [Test]
+        public async Task Delete_WithExistentPrescriptionId_ShouldReturn200()
+        {
+            string token = await new UsersControllerTests().LoginUser();
+            var newPrescription = await CreateNewPrescription(token);
+            var response = await GetResponseFromDeletePrescription(newPrescription.Id, token);
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+        }
+
+        [Test]
+        public async Task Delete_WithAnotherUserPrescription_ShouldReturn404()
+        {
+            string token = await new UsersControllerTests().LoginUser();
+            var newPrescription = await CreateNewPrescription(token);
+            string anotherUsertoken = await new UsersControllerTests().LoginUser();
+            var response = await GetResponseFromDeletePrescription(newPrescription.Id, anotherUsertoken);
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
         }
 
 
@@ -199,6 +264,13 @@ namespace WebAPI.IntegrationTests.ControllerTests
         {
             AddTokenHeaderToClient(token);
             var response = await _client.GetAsync($"/api/prescriptions/{id.ToString("N")}");
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> GetResponseFromDeletePrescription(Guid id, string token)
+        {
+            AddTokenHeaderToClient(token);
+            var response = await _client.DeleteAsync($"/api/prescriptions/{id.ToString("N")}");
             return response;
         }
 

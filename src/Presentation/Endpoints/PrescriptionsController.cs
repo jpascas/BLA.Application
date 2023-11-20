@@ -30,11 +30,11 @@ namespace Presentation.Endpoints
 
         public PrescriptionsController(ICommandBus commandBus, IMapper mapper, IPrescriptionQueryService prescriptionQueryService)
         {
-            this.commandBus = commandBus;            
+            this.commandBus = commandBus;
             this.mapper = mapper;
             this.prescriptionQueryService = prescriptionQueryService;
         }
-        
+
         [HttpPost("")]
         [FluentValidationAutoValidationAttribute]
         public async Task<ActionResult> Create(CreatePrescriptionRequestModel createRequestModel)
@@ -56,9 +56,9 @@ namespace Presentation.Endpoints
 
         [HttpPut("")]
         [FluentValidationAutoValidationAttribute]
-        public async Task<ActionResult> Update(UpdatePrescriptionRequestModel createRequestModel)
+        public async Task<ActionResult> Update(UpdatePrescriptionRequestModel updateRequestModel)
         {
-            var command = new UpdatePrescriptionCommand(createRequestModel.Id, createRequestModel.Dosage, createRequestModel.Notes);
+            var command = new UpdatePrescriptionCommand(updateRequestModel.Id, updateRequestModel.Dosage, updateRequestModel.Notes);
 
             var prescriptionResult = await this.commandBus.Send<UpdatePrescriptionCommand, Prescription>(command);
 
@@ -79,7 +79,7 @@ namespace Presentation.Endpoints
         {
             var prescriptions = await this.prescriptionQueryService.FindByCurrentUserId();
             var prescriptionModels = prescriptions.Select(prescription => this.mapper.Map<Prescription, PrescriptionResultModel>(prescription)).ToList();
-            return Ok(prescriptionModels);            
+            return Ok(prescriptionModels);
         }
 
         [HttpGet("{id}")]
@@ -96,6 +96,22 @@ namespace Presentation.Endpoints
                 return NotFound(null);
         }
 
+        [HttpDelete("{id}")]
+        [FluentValidationAutoValidationAttribute]
+        public async Task<ActionResult> Delete(Guid id)
+        {
+            var command = new DeletePrescriptionCommand(id);
 
+            var prescriptionDeleteResult = await this.commandBus.Send<DeletePrescriptionCommand, Nothing>(command);
+
+            if (prescriptionDeleteResult.Success)
+            {                
+                return Ok();
+            }
+            else
+            {
+                return ToFailureResult(prescriptionDeleteResult);
+            }
+        }
     }
 }
